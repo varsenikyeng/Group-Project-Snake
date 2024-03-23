@@ -1,4 +1,5 @@
 public class Board {
-skdhkjsdhfkjhsdkj
+public Board(){
+}
 }
 
