@@ -14,7 +14,25 @@ public class SnakeGame {
         initializeBoard();
         this.snake = new Snake();
         updateBoard();
+        placeInitialFruit();
     }
+
+    private void placeInitialFruit() {
+        this.entity = new Fruit(new Position(0, 0));
+        entity.spawnEntity(snake, board);
+    }
+
+    public void setRandomEntity() {
+        Random random = new Random();
+        double num = random.nextDouble(1);
+        if (num > 0.2) {
+            this.entity = new Fruit(new Position(0, 0));
+        } else {
+            this.entity = new Obstacle(new Position(0, 0));
+        }
+        entity.spawnEntity(snake, board);
+    }
+
 
     public Snake getSnake() {
         return new Snake(this.snake);
@@ -44,15 +62,15 @@ public class SnakeGame {
             for (int j = 0; j < BOARD_COLUMNS; j++) {
                 board[i][j] = EMPTY;
             }
-
         }
     }
 
     private void updateBoard() {
         initializeBoard();
-        board[snake.getHead().getRow()][snake.getHead().getColumn()] = SNAKE_CELL;
+        for (Position segment : snake.getBody()) {
+            board[segment.getRow()][segment.getColumn()] = SNAKE_CELL;
+        }
     }
-
 
     public boolean performMove(Move move) throws OutOfBoundMoveException {
         if (isValidMove(move.getDestination())) {
@@ -77,11 +95,11 @@ public class SnakeGame {
     }
 
     public static boolean isPositionFree(int row, int column, Snake snake) {
-        Position snakePosition = snake.getHead();
-        if (snakePosition.getRow() == row && snakePosition.getColumn() == column) {
-            return false;
+        for (Position segment : snake.getBody()) {
+            if (segment.getRow() == row && segment.getColumn() == column) {
+                return false;
+            }
         }
         return true;
     }
 }
-
