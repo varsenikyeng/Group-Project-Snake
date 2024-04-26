@@ -33,5 +33,12 @@ public class Position {
             result = new Position(row, column);
         return result;
     }
+    public boolean equals(Object other){
+        if (other == null || Position.class != other.getClass()){
+            return false;
+        }
+        Position otherPosition = (Position)other;
+        return this.row == otherPosition.getRow() && this.column == otherPosition.getColumn();
+    }
 
 }
