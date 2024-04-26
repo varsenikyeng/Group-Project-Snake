@@ -16,7 +16,7 @@ public class SnakeConsole {
                             System.out.println();
                         }
                     }
-                   Thread.sleep(3000); // Optional: Pause for 2 seconds after each iteration
+                   Thread.sleep(600);
                 }
             }
             sc.close();
