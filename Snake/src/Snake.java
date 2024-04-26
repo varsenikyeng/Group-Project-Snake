@@ -22,6 +22,9 @@
     public boolean getIsAlive() {
         return this.isAlive;
     }
+    public Position[] getBody(){
+        return this.body;
+    }
 
     public Snake(Snake that) {
         this.isAlive = that.isAlive;
@@ -72,27 +75,27 @@
     }
 
     public void grow() {
-        Position lastSegment = this.body[body.length - 1];
-        Position newSegment;
+        Position tail = this.body[this.body.length - 1];
+        Position newSegment = null;
         if (this.body.length > 1) {
             Position secondLastSegment = this.body[body.length - 2];
-            int rowOffset = lastSegment.getRow() - secondLastSegment.getRow();
-            int columnOffset = lastSegment.getColumn() - secondLastSegment.getColumn();
-            newSegment = new Position(lastSegment.getRow() + rowOffset,
-                    lastSegment.getColumn() + columnOffset);
+            int rowOffset = tail.getRow() - secondLastSegment.getRow();
+            int columnOffset = tail.getColumn() - secondLastSegment.getColumn();
+            newSegment = new Position(tail.getRow() + rowOffset,
+                    tail.getColumn() + columnOffset);
         } else {
             switch (this.direction){
                 case "w":
-                    newSegment = new Position(lastSegment.getRow() + 1, lastSegment.getColumn() );
+                    newSegment = new Position(tail.getRow() + 1, tail.getColumn() );
                     break;
                 case "s":
-                    newSegment = new Position(lastSegment.getRow() - 1, lastSegment.getColumn());
+                    newSegment = new Position(tail.getRow() - 1, tail.getColumn());
                     break;
                 case "a":
-                    newSegment = new Position(lastSegment.getRow(), lastSegment.getColumn() + 1);
+                    newSegment = new Position(tail.getRow(), tail.getColumn() + 1);
                     break;
                 case "d":
-                    newSegment = new Position(lastSegment.getRow(), lastSegment.getColumn() - 1);
+                    newSegment = new Position(tail.getRow(), tail.getColumn() - 1);
                     break;
                 default:
                     return;
@@ -105,5 +108,17 @@
         newBody[newBody.length - 1] = newSegment;
         this.body = newBody;
     }
-
-}
+        public void shrink() throws OutOfBoundMoveException {
+            Position[] newBody = new Position[this.body.length - 1];
+            if (this.body.length > 1) {
+                for (int i = 0; i < this.body.length - 1; i++) {
+                    newBody[i] = new Position(this.body[i]);
+                }
+                this.body = newBody;
+            }
+            else{
+                this.isAlive = false;
+                throw new OutOfBoundMoveException("Your snake got poisoned(");
+            }
+        }
+    }
