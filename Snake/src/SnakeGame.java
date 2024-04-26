@@ -58,16 +58,16 @@ public class SnakeGame {
         if (isValidMove(move.getDestination())) {
             Position origin = move.getOrigin();
             Position destination = move.getDestination();
+
             if (destination.equals(entity.getPosition())) {
                 entity.effect(snake);
-                //spawn an entity
+                setRandomEntity();
             }
             board[destination.getRow()][destination.getColumn()] = SNAKE_CELL;
             board[origin.getRow()][origin.getColumn()] = EMPTY;
-            snake.moveHead(move.getDestination());
+            snake.moveHead(destination);
             return true;
         }
-
         throw new OutOfBoundMoveException();
     }
 
