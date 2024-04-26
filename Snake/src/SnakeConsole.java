@@ -1,28 +1,31 @@
 import java.util.Scanner;
 public class SnakeConsole {
     private SnakeGame game;
-    public void play(){
+    public void play() throws InterruptedException {
         try {
             Scanner sc = new Scanner(System.in);
-            String input;
             this.game = new SnakeGame();
             game.printBoard();
             while (game.getSnake().getIsAlive()) {
-                input = sc.nextLine();
-                if (isValidInput(input)) {
-                    Move move = game.getSnake().generateFromPositionAndDirection(input);
-                    if (game.performMove(move)) {
-                        game.printBoard();
-
+                String input = sc.nextLine();
+                while (!sc.hasNext()) {
+                    if (isValidInput(input)) {
+                        Move move = game.getSnake().generateFromPositionAndDirection(input);
+                        if (game.performMove(move)) {
+                            game.printBoard();
+                            System.out.println();
+                        }
                     }
+                   Thread.sleep(3000); // Optional: Pause for 2 seconds after each iteration
                 }
             }
-
-        }catch(OutOfBoundMoveException e){
-            System.out.println("Game over, try better next time");
+            sc.close();
+        } catch (OutOfBoundMoveException e) {
+            System.out.println("Game over, try better next time!");
             System.exit(0);
         }
     }
+
     public boolean isValidInput (String input){
         return input.equalsIgnoreCase("w") || input.equalsIgnoreCase("s")
                 || input.equalsIgnoreCase("a") || input.equalsIgnoreCase("d");
