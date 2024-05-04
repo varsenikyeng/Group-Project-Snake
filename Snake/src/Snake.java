@@ -1,5 +1,7 @@
-    public class Snake {
-    private Position[] body;
+import java.util.ArrayList;
+
+public class Snake {
+    private ArrayList<Position> body;
     private int speed;
     private String direction;
     private boolean isAlive;
@@ -7,22 +9,21 @@
     public Snake() {
         this.isAlive = true;
         this.direction = "d";
-        this.body = new Position[1];
-        this.body[0] = new Position(7, 3);
+        this.body = new ArrayList<>();
+        this.body.add( new Position(7, 3));
     }
-
     public Position getHead() {
-        return new Position(this.body[0].getRow(), this.body[0].getColumn());
+        return new Position(this.body.getFirst().getRow(), this.body.getFirst().getColumn());
     }
 
     public String getDirection() {
         return this.direction;
     }
-
     public boolean getIsAlive() {
         return this.isAlive;
     }
-    public Position[] getBody(){
+
+    public ArrayList<Position> getBody() {
         return this.body;
     }
 
@@ -30,9 +31,9 @@
         this.isAlive = that.isAlive;
         this.speed = that.speed;
         this.direction = that.direction;
-        this.body = new Position[that.body.length];
-        for (int i = 0; i < that.body.length; i++) {
-            this.body[i] = new Position(that.body[i].getRow(), that.body[i].getColumn());
+        this.body = new ArrayList<>(that.body.size());
+        for (Position pos : that.body) {
+            this.body.add(new Position(pos.getRow(), pos.getColumn()));
         }
     }
 
@@ -71,22 +72,22 @@
     }
 
     public void moveHead(Position newPosition) {
-        this.body[0] = newPosition;
+        this.body.set(0, newPosition);
     }
 
     public void grow() {
-        Position tail = this.body[this.body.length - 1];
+        Position tail = this.body.getLast();
         Position newSegment = null;
-        if (this.body.length > 1) {
-            Position secondLastSegment = this.body[body.length - 2];
+        if (this.body.size() > 1) {
+            Position secondLastSegment = this.body.get(body.size() - 2);
             int rowOffset = tail.getRow() - secondLastSegment.getRow();
             int columnOffset = tail.getColumn() - secondLastSegment.getColumn();
             newSegment = new Position(tail.getRow() + rowOffset,
                     tail.getColumn() + columnOffset);
         } else {
-            switch (this.direction){
+            switch (this.direction) {
                 case "w":
-                    newSegment = new Position(tail.getRow() + 1, tail.getColumn() );
+                    newSegment = new Position(tail.getRow() + 1, tail.getColumn());
                     break;
                 case "s":
                     newSegment = new Position(tail.getRow() - 1, tail.getColumn());
@@ -97,28 +98,23 @@
                 case "d":
                     newSegment = new Position(tail.getRow(), tail.getColumn() - 1);
                     break;
-                default:
-                    return;
+//                default:
+//                    return;
             }
         }
-        Position[] newBody = new Position[this.body.length + 1];
-        for (int i = 0; i < this.body.length; i++){
-            newBody[i] = new Position(this.body[i]);
-        }
-        newBody[newBody.length - 1] = newSegment;
-        this.body = newBody;
+        this.body.add(newSegment);
+        this.body.trimToSize();
     }
-        public void shrink() throws OutOfBoundMoveException {
-            Position[] newBody = new Position[this.body.length - 1];
-            if (this.body.length > 1) {
-                for (int i = 0; i < this.body.length - 1; i++) {
-                    newBody[i] = new Position(this.body[i]);
-                }
-                this.body = newBody;
-            }
-            else{
-                this.isAlive = false;
-                throw new OutOfBoundMoveException("Your snake got poisoned(");
-            }
+    public void shrink() throws OutOfBoundMoveException {
+        if (this.body.size() > 1) {
+            this.body.removeLast();
+        } else {
+            this.isAlive = false;
+            throw new OutOfBoundMoveException("Snake got poisoned(");
         }
     }
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
+
+}
