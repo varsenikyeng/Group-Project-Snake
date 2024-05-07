@@ -19,6 +19,7 @@ public class SnakeUI extends JFrame {
         setLayout(cardLayout);
         initializeWelcomePanel();
         initializeLevelSelectionPanel();
+        initializeRulesPanel();
         setVisible(true);
 
     }
@@ -46,34 +47,40 @@ public class SnakeUI extends JFrame {
         rulesButton.setForeground(new Color(51, 70, 44));
         rulesButton.setFont(new Font("Arial", Font.PLAIN, 38));
         rulesButton.setBackground(new Color(157, 213, 139));
+        rulesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(getContentPane(), "rulesPanel");
+            }
+        });
         buttonPanel.add(rulesButton);
 
         welcomePanel.add(welcomeLabel, BorderLayout.NORTH);
         welcomePanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        ImageIcon originalIcon = new ImageIcon("src/snake/ui/snake.png");
+        ImageIcon originalIcon = new ImageIcon("Snake/src/snake/ui/snake.png");
         Image image = originalIcon.getImage(); // Convert ImageIcon to Image
         Image resizedImage = image.getScaledInstance(600, 600, Image.SCALE_SMOOTH);
         ImageIcon resizedIcon = new ImageIcon(resizedImage);
         JLabel iconLabel = new JLabel(resizedIcon);
         welcomePanel.add(iconLabel, BorderLayout.CENTER);
 
-        ImageIcon appleIcon = new ImageIcon("src/snake/ui/apple.png");
+        ImageIcon appleIcon = new ImageIcon("Snake/src/snake/ui/apple.png");
         Image appleImage = appleIcon.getImage();
         Image resizedAppleImage = appleImage.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
         ImageIcon resizedAppleIcon = new ImageIcon(resizedAppleImage);
         JLabel appleLabel = new JLabel(resizedAppleIcon);
         welcomePanel.add(appleLabel, BorderLayout.WEST);
 
-        ImageIcon mushroomIcon = new ImageIcon("src/snake/ui/mushroom.png");
+        ImageIcon mushroomIcon = new ImageIcon("Snake/src/snake/ui/mushroom.png");
         Image mushroomImage = mushroomIcon.getImage();
         Image resizedMushroomImage = mushroomImage.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
         ImageIcon resizedMushroomIcon = new ImageIcon(resizedMushroomImage);
         JLabel mushroomLabel = new JLabel(resizedMushroomIcon);
         welcomePanel.add(mushroomLabel, BorderLayout.EAST);
 
-        getContentPane().add(welcomePanel);
-        setVisible(true);
+        getContentPane().add(welcomePanel, "welcomePanel");
+        //setVisible(true);
     }
     private void initializeLevelSelectionPanel(){
         JPanel levelSelectionPanel  = new JPanel(new BorderLayout());
@@ -102,6 +109,30 @@ public class SnakeUI extends JFrame {
         //setVisible(true);
 
     }
+    private void initializeRulesPanel(){
+        JPanel rulesPanel = new JPanel(new BorderLayout());
+        rulesPanel.setBackground(new Color(141, 157, 148));
+        JLabel rules = new JLabel("RULES");
+        JLabel theRulesOfWorm = new JLabel("Worm: The snake eats fruits and grows, but if it eats mushroom, it shrinks.");
+
+        rules.setForeground(Color.black);
+        theRulesOfWorm.setForeground(Color.black);
+        rules.setFont(new Font("Times New Roman", Font.PLAIN, 40));
+        theRulesOfWorm.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        rulesPanel.add(rules, BorderLayout.NORTH);
+        rulesPanel.add(theRulesOfWorm, BorderLayout.CENTER);
+        getContentPane().add(rulesPanel, "rulesPanel");
+
+        JLabel theRulesOfPython = new JLabel("Python: The snake has three lives. If it eats fruits, it grows, but if it eats a mushroom, it loses a heart.");
+        theRulesOfPython.setForeground(Color.black);
+        rules.setFont(new Font("Times New Roman", Font.PLAIN, 40));
+        theRulesOfPython.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        rulesPanel.add(theRulesOfPython, BorderLayout.SOUTH);
+        getContentPane().add(rulesPanel, "rulesPanel");
+        //setVisible(true);
+
+    }
+
 
     public static void main(String[] args) {
         try {
