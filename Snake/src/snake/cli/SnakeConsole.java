@@ -12,7 +12,7 @@ public class SnakeConsole {
         if (difficulty.equals("worm")) {
             try {
                 this.game = new SnakeGame();
-                int highScore = ScoreManager.getHighestScore();
+                int highScore = ScoreManager.getHighestScore(difficulty);
                 System.out.println("Highest Score: " + highScore);
                 System.out.println("Current Score: " + game.getScore());
                 game.printBoard();
@@ -33,7 +33,7 @@ public class SnakeConsole {
                         }
                     }
                     if (!game.getSnake().getIsAlive()) {
-                        ScoreManager.updateScore(game.getScore());
+                        ScoreManager.updateScore(game.getScore(), difficulty);
                         System.out.println("Դու ճխլվեցիր:(");
                         System.exit(0);
                     }
@@ -41,7 +41,7 @@ public class SnakeConsole {
                 }
                 sc.close();
             } catch (OutOfBoundMoveException e) {
-                ScoreManager.updateScore(game.getScore());
+                ScoreManager.updateScore(game.getScore(), difficulty);
                 System.out.println(e.getMessage());
                 System.exit(0);
             }
@@ -50,7 +50,10 @@ public class SnakeConsole {
             try {
                 this.hardSnakeGame = new HardSnakeGame();
                 hardSnakeGame.printHearts();
-                System.out.println(hardSnakeGame.getScore());
+                int highScore = ScoreManager.getHighestScore(difficulty);
+                System.out.println("Current Score: " + hardSnakeGame.getScore());
+                System.out.println("Highest Score: " + highScore);
+                //System.out.println(hardSnakeGame.getScore());
                 hardSnakeGame.printBoard();
                 while (hardSnakeGame.getSnake().getIsAlive()) {
                     if (hardSnakeGame.getSnake().getBody().size() == 25) {
@@ -63,16 +66,20 @@ public class SnakeConsole {
                         Move move = hardSnakeGame.getSnake().generateFromPositionAndDirection(input);
                         if (hardSnakeGame.performMove(move)) {
                             hardSnakeGame.printHearts();
-                            System.out.println(hardSnakeGame.getScore());
+                            System.out.println("Current Score: " + hardSnakeGame.getScore());
+                            System.out.println("Highest Score: " + highScore);
+                            //System.out.println(hardSnakeGame.getScore());
                             hardSnakeGame.printBoard();
                             System.out.println(hardSnakeGame.getSnake().getDirection());
                         }
                     }
                     if (!hardSnakeGame.getSnake().getIsAlive()) {
-                        System.out.println("Դու ճխլվեցիր:(");
+                        ScoreManager.updateScore(hardSnakeGame.getScore(), difficulty);
+                        System.out.println("Դու լխճվեցիր:(");
                         System.exit(0);
                     }
                     if (hardSnakeGame.getHeart().getCount() <= 0) {
+                        ScoreManager.updateScore(hardSnakeGame.getScore(), difficulty);
                         hardSnakeGame.getSnake().setIsAlive(false);
                         System.out.println("All lives lost! Game over.");
                         System.exit(0);
@@ -80,12 +87,13 @@ public class SnakeConsole {
                 }
                 sc.close();
             } catch (OutOfBoundMoveException e) {
+                ScoreManager.updateScore(hardSnakeGame.getScore(), difficulty);
                 System.out.println(e.getMessage());
                 System.exit(0);
             }
 
         }
-        ScoreManager.updateScore(game.getScore());
+        ScoreManager.updateScore(game.getScore(), difficulty);
     }
 
     public boolean isValidInput (String input, String direction){
