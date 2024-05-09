@@ -5,12 +5,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import static javax.swing.text.StyleConstants.setIcon;
-
 public class SnakeUI extends JFrame {
     private JPanel welcomePanel;
     private JPanel gamePanel;
     private CardLayout cardLayout = new CardLayout();
+    private SnakeGame wormGame;
+    private HardSnakeGame pythonGame;
     public SnakeUI(){
         setTitle("Snake Game");
         setSize(800, 900);
@@ -20,7 +20,9 @@ public class SnakeUI extends JFrame {
         initializeWelcomePanel();
         initializeLevelSelectionPanel();
         initializeRulesPanel();
+        initializeWormPanel();
         setVisible(true);
+        setResizable(false);
 
     }
     private void initializeWelcomePanel(){
@@ -84,16 +86,22 @@ public class SnakeUI extends JFrame {
     }
     private void initializeLevelSelectionPanel(){
         JPanel levelSelectionPanel  = new JPanel(new BorderLayout());
-        levelSelectionPanel.setBackground(new Color(83, 201, 150));
+        levelSelectionPanel.setBackground(new Color(155, 175, 163));
         JLabel chooseLevel = new JLabel("CHOOSE THE DIFFICULTY LEVEL", SwingConstants.CENTER);
         chooseLevel.setForeground(new Color(26, 66, 14));
-        chooseLevel.setFont(new Font("Arial", Font.BOLD, 32));
+        chooseLevel.setFont(new Font("Arial", Font.BOLD, 28));
 
         JPanel levelsPanel = new JPanel();
         JButton wormButton = new JButton("Worm");
         wormButton.setBackground(new Color(150, 210, 158));
         wormButton.setForeground(new Color(10, 10, 10));
         wormButton.setFont(new Font("Times New Roman", Font.PLAIN, 25));
+        wormButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(getContentPane(), "boardPanel");
+            }
+        });
         levelsPanel.add(wormButton);
 
         JButton pythonButton = new JButton("Python");
@@ -102,36 +110,95 @@ public class SnakeUI extends JFrame {
         pythonButton.setFont(new Font("Times New Roman", Font.PLAIN, 25));
         levelsPanel.add(pythonButton);
 
+
+        JPanel backPanel = new JPanel(new BorderLayout());
+        JButton backToMain = new JButton("Back");
+        backToMain.setBackground(new Color(164, 203, 169));
+        backToMain.setForeground(new Color(10, 10, 10));
+        backToMain.setFont(new Font("Times New Roman", Font.PLAIN, 30));
+        backToMain.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(getContentPane(), "welcomePanel");
+            }
+        });
+        backPanel.setBackground(new Color(155, 175, 163));
+        backPanel.add(backToMain, BorderLayout.WEST);
+
         levelSelectionPanel.add(chooseLevel, BorderLayout.CENTER);
         levelSelectionPanel.add(levelsPanel, BorderLayout.SOUTH);
+        levelSelectionPanel.add(backPanel, BorderLayout.NORTH);
+
 
         getContentPane().add(levelSelectionPanel, "levelSelectionPanel");
-        //setVisible(true);
 
     }
     private void initializeRulesPanel(){
-        JPanel rulesPanel = new JPanel(new BorderLayout());
-        rulesPanel.setBackground(new Color(141, 157, 148));
-        JLabel rules = new JLabel("RULES");
-        JLabel theRulesOfWorm = new JLabel("Worm: The snake eats fruits and grows, but if it eats mushroom, it shrinks.");
 
+        JPanel rulesPanel = new JPanel();
+        rulesPanel.setLayout(new BoxLayout(rulesPanel, BoxLayout.Y_AXIS));
+        rulesPanel.setBackground(new Color(106, 133, 121));
+
+        JButton backToMain = new JButton("Back");
+        backToMain.setBackground(new Color(130, 164, 133));
+        backToMain.setForeground(new Color(10, 10, 10));
+        backToMain.setFont(new Font("Times New Roman", Font.PLAIN, 30));
+        backToMain.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(getContentPane(), "welcomePanel");
+            }
+        });
+
+        JPanel backPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        backPanel.add(backToMain);
+        backPanel.setBackground(new Color(106, 133, 121));
+        rulesPanel.add(backPanel);
+
+        JLabel rules = new JLabel("THE RULES");
         rules.setForeground(Color.black);
+        rules.setFont(new Font("Times New Roman", Font.BOLD, 40));
+        JPanel rulesTitlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        rulesTitlePanel.add(rules);
+        rulesTitlePanel.setBackground(new Color(106, 133, 121));
+        rulesPanel.add(rulesTitlePanel);
+
+        JLabel theRulesOfWorm = new JLabel("Worm: The snake eats fruits and grows, but if it eats a mushroom, it shrinks.");
         theRulesOfWorm.setForeground(Color.black);
-        rules.setFont(new Font("Times New Roman", Font.PLAIN, 40));
-        theRulesOfWorm.setFont(new Font("Times New Roman", Font.BOLD, 20));
-        rulesPanel.add(rules, BorderLayout.NORTH);
-        rulesPanel.add(theRulesOfWorm, BorderLayout.CENTER);
-        getContentPane().add(rulesPanel, "rulesPanel");
+        theRulesOfWorm.setFont(new Font("Times New Roman", Font.PLAIN, 30));
+        JPanel wormRulesPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        wormRulesPanel.setBackground(new Color(106, 133, 121));
+        wormRulesPanel.add(theRulesOfWorm);
+        rulesPanel.add(wormRulesPanel);
 
         JLabel theRulesOfPython = new JLabel("Python: The snake has three lives. If it eats fruits, it grows, but if it eats a mushroom, it loses a heart.");
         theRulesOfPython.setForeground(Color.black);
-        rules.setFont(new Font("Times New Roman", Font.PLAIN, 40));
-        theRulesOfPython.setFont(new Font("Times New Roman", Font.BOLD, 20));
-        rulesPanel.add(theRulesOfPython, BorderLayout.SOUTH);
+        theRulesOfPython.setFont(new Font("Times New Roman", Font.PLAIN, 30));
+        JPanel pythonRulesPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        pythonRulesPanel.setBackground(new Color(106, 133, 121));
+        pythonRulesPanel.add(theRulesOfPython);
+        rulesPanel.add(pythonRulesPanel);
+
         getContentPane().add(rulesPanel, "rulesPanel");
-        //setVisible(true);
+    }
+
+    private void initializeWormPanel(){
+        wormGame = new SnakeGame();
+        JPanel boardPanel = new JPanel(new GridLayout(wormGame.BOARD_ROWS, wormGame.BOARD_COLUMNS));
+        boardPanel.setPreferredSize(new Dimension(400, 400));
+        for (int i = 0; i < SnakeGame.BOARD_ROWS; i++) {
+            for (int j = 0; j < SnakeGame.BOARD_COLUMNS; j++) {
+                JLabel cellLabel = new JLabel();
+                cellLabel.setBackground(new Color(113, 147, 101));
+                boardPanel.add(cellLabel);
+            }
+        }
+        boardPanel.setBackground(new Color(131, 178, 113));
+        getContentPane().add(boardPanel, "boardPanel");
+
 
     }
+
 
 
     public static void main(String[] args) {

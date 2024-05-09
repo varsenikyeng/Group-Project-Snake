@@ -17,7 +17,7 @@ public class SnakeConsole {
                 System.out.println("Current Score: " + game.getScore());
                 game.printBoard();
                 while (game.getSnake().getIsAlive()) {
-                    if (game.getSnake().getBody().size() == 25) {
+                    if (game.getSnake().getBody().size() == game.BOARD_COLUMNS * game.BOARD_ROWS) {
                         System.out.println("YOU WON!");
                         System.exit(0);
                     }
@@ -46,14 +46,13 @@ public class SnakeConsole {
                 System.exit(0);
             }
 
-        } else if (difficulty.equals("python")) { // Compare with "python"
+        } else if (difficulty.equals("python")) {
             try {
                 this.hardSnakeGame = new HardSnakeGame();
                 hardSnakeGame.printHearts();
                 int highScore = ScoreManager.getHighestScore(difficulty);
                 System.out.println("Current Score: " + hardSnakeGame.getScore());
                 System.out.println("Highest Score: " + highScore);
-                //System.out.println(hardSnakeGame.getScore());
                 hardSnakeGame.printBoard();
                 while (hardSnakeGame.getSnake().getIsAlive()) {
                     if (hardSnakeGame.getSnake().getBody().size() == 25) {
@@ -68,7 +67,6 @@ public class SnakeConsole {
                             hardSnakeGame.printHearts();
                             System.out.println("Current Score: " + hardSnakeGame.getScore());
                             System.out.println("Highest Score: " + highScore);
-                            //System.out.println(hardSnakeGame.getScore());
                             hardSnakeGame.printBoard();
                             System.out.println(hardSnakeGame.getSnake().getDirection());
                         }
