@@ -1,10 +1,16 @@
 package snake.cli;
+
 import snake.core.*;
+
 import java.util.Scanner;
 
 public class SnakeConsole {
     private SnakeGame game;
     private HardSnakeGame hardSnakeGame;
+
+    /**
+     * Begins the gameplay loop, allowing the player to choose a difficulty level (worm or python) and interact with the game until it's over.
+     */
     public void play() {
         Scanner sc = new Scanner(System.in);
         System.out.println("Choose a difficulty level: worm/python");
@@ -34,7 +40,7 @@ public class SnakeConsole {
                     }
                     if (!game.getSnake().getIsAlive()) {
                         ScoreManager.updateScore(game.getScore(), difficulty);
-                        System.out.println("Դու ճխլվեցիր:(");
+                        System.out.println("Դու ճխլվեցիր :(");
                         System.exit(0);
                     }
 
@@ -94,11 +100,18 @@ public class SnakeConsole {
         ScoreManager.updateScore(game.getScore(), difficulty);
     }
 
-    public boolean isValidInput (String input, String direction){
+    /**
+     * Checks if the input provided by the player is valid based on the current direction of the snake.
+     *
+     * @param input     The input provided by the player.
+     * @param direction The current direction of the snake.
+     * @return True if the input is valid, false otherwise.
+     */
+    public static boolean isValidInput(String input, String direction) {
         return input.equalsIgnoreCase("w") && !direction.equalsIgnoreCase("s") ||
                 input.equalsIgnoreCase("s") && !direction.equalsIgnoreCase("w") ||
                 input.equalsIgnoreCase("a") && !direction.equalsIgnoreCase("d") ||
-                input.equalsIgnoreCase("d") && !direction.equalsIgnoreCase("a") ;
+                input.equalsIgnoreCase("d") && !direction.equalsIgnoreCase("a");
     }
 }
 

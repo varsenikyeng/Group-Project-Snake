@@ -2,7 +2,6 @@ package snake.core;
 
 public class HardSnakeGame extends SnakeGame{
     private Heart heart;
-    private static final String scorePath = "hardSnakeGameScore.txt";
     public HardSnakeGame(){
         super();
         this.heart = new Heart(new Position(-1, -1));
