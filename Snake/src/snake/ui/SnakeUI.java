@@ -1,6 +1,5 @@
 package snake.ui;
 import snake.core.*;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -11,6 +10,7 @@ public class SnakeUI extends JFrame {
     private CardLayout cardLayout = new CardLayout();
     private SnakeGame wormGame;
     private HardSnakeGame pythonGame;
+    private Timer moveTimer;
 
     public SnakeUI() {
         setTitle("Snake Game");
@@ -21,9 +21,10 @@ public class SnakeUI extends JFrame {
         initializeWelcomePanel();
         initializeLevelSelectionPanel();
         initializeRulesPanel();
-        initializeWormPanel();
+        //initializeWormPanel();
         setVisible(true);
         setResizable(false);
+
 
     }
 
@@ -103,7 +104,10 @@ public class SnakeUI extends JFrame {
         wormButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(getContentPane(), "boardPanel");
+                initializeWormPanel();
+                cardLayout.show(getContentPane(), "mainPanel");
+
+
             }
         });
         levelsPanel.add(wormButton);
@@ -112,6 +116,13 @@ public class SnakeUI extends JFrame {
         pythonButton.setBackground(new Color(150, 210, 158));
         pythonButton.setForeground(new Color(10, 10, 10));
         pythonButton.setFont(new Font("Times New Roman", Font.PLAIN, 30));
+        pythonButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                initializePythonPanel();
+                cardLayout.show(getContentPane(), "pythonPanel");
+            }
+        });
         levelsPanel.add(pythonButton);
 
 
@@ -199,7 +210,7 @@ public class SnakeUI extends JFrame {
         scorePanel.setBackground(new Color(195, 229, 191));
         JLabel currentScoreLabel = new JLabel("Score: 0");
         currentScoreLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        JLabel highScoreLabel = new JLabel("Highest Score: 0");
+        JLabel highScoreLabel = new JLabel("Highest Score: "+ ScoreManager.getHighestScore("worm"));
         highScoreLabel.setFont(new Font("Arial", Font.BOLD, 20));
         scorePanel.add(currentScoreLabel);
         scorePanel.add(highScoreLabel);
@@ -213,10 +224,10 @@ public class SnakeUI extends JFrame {
         boardPanel.setPreferredSize(new Dimension(400, 400));
         Color lightGreen = new Color(157, 213, 139);
         Color darkGreen = new Color(127, 169, 112);
-        updateBoard(boardPanel, snakeHeadIcon, fruitIcon, mushroomIcon, snakeCellIcon, lightGreen, darkGreen);
+        updateBoard(wormGame, boardPanel, snakeHeadIcon, fruitIcon, mushroomIcon, snakeCellIcon, lightGreen, darkGreen);
         KeyListener keyListener = new KeyListener(){
             @Override
-            public void keyTyped(KeyEvent e) {
+            public void keyPressed(KeyEvent e) {
                 int keyCode = e.getKeyCode();
                 Move newMove = null;
                 switch(keyCode){
@@ -236,29 +247,46 @@ public class SnakeUI extends JFrame {
                 if(newMove!=null){
                     try {
                         wormGame.performMove(newMove);
-                        updateBoard(boardPanel, snakeHeadIcon, fruitIcon, mushroomIcon, snakeCellIcon, lightGreen, darkGreen);
+                        updateBoard(wormGame, boardPanel, snakeHeadIcon, fruitIcon, mushroomIcon, snakeCellIcon, lightGreen, darkGreen);
+                        currentScoreLabel.setText("Score: " + wormGame.getScore());
                     } catch (OutOfBoundMoveException exception) {
                         JFrame frame = new JFrame();
                         JOptionPane.showMessageDialog(frame, "You lost!", "Game Over", JOptionPane.ERROR_MESSAGE);
+                        System.exit(0);
                     }
                 }
             }
             @Override
-            public void keyPressed(KeyEvent e) {}
+            public void keyTyped(KeyEvent e) {}
             @Override
             public void keyReleased(KeyEvent e) {}
         };
 
         mainPanel.addKeyListener(keyListener);
-        mainPanel.setFocusable(true);
         mainPanel.add(scorePanel, BorderLayout.NORTH);
         mainPanel.add(boardPanel);
-        getContentPane().add(mainPanel, "boardPanel");
+        getContentPane().add(mainPanel, "mainPanel");
+        moveTimer = new Timer(300, e -> {
+            if (wormGame.getSnake().getDirection() != null) {
+                try {
+                    wormGame.performMove(wormGame.getSnake().generateFromPositionAndDirection(wormGame.getSnake().getDirection()));
+                    updateBoard(wormGame, boardPanel, snakeHeadIcon, fruitIcon, mushroomIcon, snakeCellIcon, lightGreen, darkGreen);
+                    currentScoreLabel.setText("Score: " + wormGame.getScore());
+                }
+                catch (OutOfBoundMoveException exception) {
+                    JFrame frame = new JFrame();
+                    JOptionPane.showMessageDialog(frame, "You lost!", "Game Over", JOptionPane.ERROR_MESSAGE);
+                    System.exit(0);
+                }
+            }
+        });
+        moveTimer.start();
     }
 
 
-    private void updateBoard(JPanel boardPanel, ImageIcon snakeHeadIcon, ImageIcon fruitIcon, ImageIcon mushroomIcon, ImageIcon snakeCellIcon, Color lightGreen, Color darkGreen) {
+    private void updateBoard(SnakeGame wormGame, JPanel boardPanel, ImageIcon snakeHeadIcon, ImageIcon fruitIcon, ImageIcon mushroomIcon, ImageIcon snakeCellIcon, Color lightGreen, Color darkGreen) {
         boardPanel.removeAll();
+
         for (int i = 0; i < wormGame.BOARD_ROWS; i++) {
             for (int j = 0; j < wormGame.BOARD_COLUMNS; j++) {
                 JLabel cellLabel = new JLabel();
@@ -271,6 +299,8 @@ public class SnakeUI extends JFrame {
                 String[][] board = wormGame.getBoard();
                 String cellType = board[i][j];
 
+                ImageIcon icon = null;
+
                 if (cellType.equals(wormGame.SNAKE_HEAD)) {
                     cellLabel.setIcon(snakeHeadIcon);
                 } else if (cellType.equals(Fruit.symbol)) {
@@ -282,9 +312,104 @@ public class SnakeUI extends JFrame {
                 } else {
                     cellLabel.setIcon(null);
                 }
+                cellLabel.setVisible(true);
                 boardPanel.add(cellLabel);
             }
         }
+        boardPanel.revalidate();
+        boardPanel.repaint();
+    }
+
+    private void initializePythonPanel() {
+        pythonGame = new HardSnakeGame();
+        JPanel pythonPanel = new JPanel(new BorderLayout());
+        pythonPanel.setBackground(new Color(157, 213, 139));
+
+        JPanel livesPanel = new JPanel();
+        livesPanel.setBackground(new Color(195, 229, 191));
+        ImageIcon heartIcon = new ImageIcon(new ImageIcon("Snake/gfx/heart.png").getImage().getScaledInstance(40, 40, Image.SCALE_DEFAULT));
+        JLabel[] livesIcons = new JLabel[3];
+        for (int i = 0; i < livesIcons.length; i++) {
+            livesIcons[i] = new JLabel(heartIcon);
+            livesPanel.add(livesIcons[i]);
+        }
+
+        JPanel scorePanel = new JPanel();
+        scorePanel.setBackground(new Color(195, 229, 191));
+        JLabel currentScoreLabel = new JLabel("Score: 0");
+        currentScoreLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        JLabel highScoreLabel = new JLabel("Highest Score: " + ScoreManager.getHighestScore("python"));
+        highScoreLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        scorePanel.add(currentScoreLabel);
+        scorePanel.add(highScoreLabel);
+
+        ImageIcon snakeHeadIcon = new ImageIcon(new ImageIcon("Snake/gfx/snakeHead.png").getImage().getScaledInstance(62, 50, Image.SCALE_DEFAULT));
+        ImageIcon fruitIcon = new ImageIcon(new ImageIcon("Snake/gfx/appleGame.png").getImage().getScaledInstance(50, 40, Image.SCALE_DEFAULT));
+        ImageIcon mushroomIcon = new ImageIcon(new ImageIcon("Snake/gfx/mushroom.png").getImage().getScaledInstance(55, 50, Image.SCALE_DEFAULT));
+        ImageIcon snakeCellIcon = new ImageIcon(new ImageIcon("Snake/gfx/snakeBody.png").getImage().getScaledInstance(62, 50, Image.SCALE_DEFAULT));
+
+        JPanel boardPanel = new JPanel(new GridLayout(pythonGame.BOARD_ROWS, pythonGame.BOARD_COLUMNS));
+        boardPanel.setPreferredSize(new Dimension(400, 400));
+        Color lightGreen = new Color(157, 213, 139);
+        Color darkGreen = new Color(127, 169, 112);
+        updateBoard(pythonGame, boardPanel, snakeHeadIcon, fruitIcon, mushroomIcon, snakeCellIcon, lightGreen, darkGreen);
+        KeyListener keyListener = new KeyListener(){
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int keyCode = e.getKeyCode();
+                Move newMove = null;
+                switch(keyCode){
+                    case KeyEvent.VK_W:
+                        newMove = pythonGame.getSnake().generateFromPositionAndDirection("w");
+                        break;
+                    case KeyEvent.VK_A:
+                        newMove = pythonGame.getSnake().generateFromPositionAndDirection("a");
+                        break;
+                    case KeyEvent.VK_S:
+                        newMove = pythonGame.getSnake().generateFromPositionAndDirection("s");
+                        break;
+                    case KeyEvent.VK_D:
+                        newMove = pythonGame.getSnake().generateFromPositionAndDirection("d");
+                        break;
+                }
+                if(newMove!=null){
+                    try {
+                        pythonGame.performMove(newMove);
+                        updateBoard(pythonGame, boardPanel, snakeHeadIcon, fruitIcon, mushroomIcon, snakeCellIcon, lightGreen, darkGreen);
+                        currentScoreLabel.setText("Score: " + pythonGame.getScore());
+                    } catch (OutOfBoundMoveException exception) {
+                        JFrame frame = new JFrame();
+                        JOptionPane.showMessageDialog(frame, "You lost!", "Game Over", JOptionPane.ERROR_MESSAGE);
+                        System.exit(0);
+                    }
+                }
+            }
+            @Override
+            public void keyTyped(KeyEvent e) {}
+            @Override
+            public void keyReleased(KeyEvent e) {}
+        };
+
+        pythonPanel.addKeyListener(keyListener);
+        scorePanel.add(livesPanel, BorderLayout.WEST);
+        pythonPanel.add(scorePanel, BorderLayout.NORTH);
+        pythonPanel.add(boardPanel);
+        getContentPane().add(pythonPanel, "pythonPanel");
+        moveTimer = new Timer(300, e -> {
+            if (pythonGame.getSnake().getDirection() != null) {
+                try {
+                    pythonGame.performMove(pythonGame.getSnake().generateFromPositionAndDirection(pythonGame.getSnake().getDirection()));
+                    updateBoard(pythonGame, boardPanel, snakeHeadIcon, fruitIcon, mushroomIcon, snakeCellIcon, lightGreen, darkGreen);
+                    currentScoreLabel.setText("Score: " + pythonGame.getScore());
+                }
+                catch (OutOfBoundMoveException exception) {
+                    JFrame frame = new JFrame();
+                    JOptionPane.showMessageDialog(frame, "You lost!", "Game Over", JOptionPane.ERROR_MESSAGE);
+                    System.exit(0);
+                }
+            }
+        });
+        moveTimer.start();
     }
 
 
