@@ -409,7 +409,7 @@ public class SnakeUI extends JFrame {
         pythonPanel.add(scorePanel, BorderLayout.NORTH);
         pythonPanel.add(boardPanel);
         getContentPane().add(pythonPanel, "pythonPanel");
-        moveTimer = new Timer(300, e -> {
+        moveTimer = new Timer(270, e -> {
             if (pythonGame.getSnake().getDirection() != null) {
                 try {
                     pythonGame.performMove(pythonGame.getSnake().generateFromPositionAndDirection(pythonGame.getSnake().getDirection()));
