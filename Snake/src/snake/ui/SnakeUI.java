@@ -249,6 +249,11 @@ public class SnakeUI extends JFrame {
                         wormGame.performMove(newMove);
                         updateBoard(wormGame, boardPanel, snakeHeadIcon, fruitIcon, mushroomIcon, snakeCellIcon, lightGreen, darkGreen);
                         currentScoreLabel.setText("Score: " + wormGame.getScore());
+                        if(wormGame.getSnake().getBody().size() == wormGame.BOARD_ROWS*wormGame.BOARD_COLUMNS){
+                            JFrame frame = new JFrame();
+                            JOptionPane.showMessageDialog(frame, "Congratulations! You Won!", "Victory", JOptionPane.INFORMATION_MESSAGE);
+                            System.exit(0);
+                        }
                     } catch (OutOfBoundMoveException exception) {
                         JFrame frame = new JFrame();
                         JOptionPane.showMessageDialog(frame, "You lost!", "Game Over", JOptionPane.ERROR_MESSAGE);
@@ -286,7 +291,7 @@ public class SnakeUI extends JFrame {
 
     private void updateBoard(SnakeGame wormGame, JPanel boardPanel, ImageIcon snakeHeadIcon, ImageIcon fruitIcon, ImageIcon mushroomIcon, ImageIcon snakeCellIcon, Color lightGreen, Color darkGreen) {
         boardPanel.removeAll();
-
+        String[][] board = wormGame.getBoard();
         for (int i = 0; i < wormGame.BOARD_ROWS; i++) {
             for (int j = 0; j < wormGame.BOARD_COLUMNS; j++) {
                 JLabel cellLabel = new JLabel();
@@ -296,7 +301,6 @@ public class SnakeUI extends JFrame {
                 } else {
                     cellLabel.setBackground(darkGreen);
                 }
-                String[][] board = wormGame.getBoard();
                 String cellType = board[i][j];
 
                 ImageIcon icon = null;
@@ -315,6 +319,11 @@ public class SnakeUI extends JFrame {
                 cellLabel.setVisible(true);
                 boardPanel.add(cellLabel);
             }
+        }
+        if(!wormGame.getSnake().getIsAlive()){
+            JFrame frame = new JFrame();
+            JOptionPane.showMessageDialog(frame, "You lost!", "Game Over", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
         }
         boardPanel.revalidate();
         boardPanel.repaint();
@@ -377,6 +386,11 @@ public class SnakeUI extends JFrame {
                         pythonGame.performMove(newMove);
                         updateBoard(pythonGame, boardPanel, snakeHeadIcon, fruitIcon, mushroomIcon, snakeCellIcon, lightGreen, darkGreen);
                         currentScoreLabel.setText("Score: " + pythonGame.getScore());
+                        if(pythonGame.getSnake().getBody().size() == pythonGame.BOARD_ROWS*pythonGame.BOARD_COLUMNS){
+                            JFrame frame = new JFrame();
+                            JOptionPane.showMessageDialog(frame, "Congratulations! You Won!", "Victory", JOptionPane.INFORMATION_MESSAGE);
+                            System.exit(0);
+                        }
                     } catch (OutOfBoundMoveException exception) {
                         JFrame frame = new JFrame();
                         JOptionPane.showMessageDialog(frame, "You lost!", "Game Over", JOptionPane.ERROR_MESSAGE);
