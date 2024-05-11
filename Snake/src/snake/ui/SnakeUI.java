@@ -24,8 +24,6 @@ public class SnakeUI extends JFrame {
         //initializeWormPanel();
         setVisible(true);
         setResizable(false);
-
-
     }
 
     private void initializeWelcomePanel() {
@@ -233,15 +231,19 @@ public class SnakeUI extends JFrame {
                 switch(keyCode){
                     case KeyEvent.VK_W:
                         newMove = wormGame.getSnake().generateFromPositionAndDirection("w");
+                        wormGame.getSnake().setDirection("w");
                         break;
                     case KeyEvent.VK_A:
                         newMove = wormGame.getSnake().generateFromPositionAndDirection("a");
+                        wormGame.getSnake().setDirection("a");
                         break;
                     case KeyEvent.VK_S:
                         newMove = wormGame.getSnake().generateFromPositionAndDirection("s");
+                        wormGame.getSnake().setDirection("s");
                         break;
                     case KeyEvent.VK_D:
                         newMove = wormGame.getSnake().generateFromPositionAndDirection("d");
+                        wormGame.getSnake().setDirection("d");
                         break;
                 }
                 if(newMove!=null){
@@ -266,7 +268,8 @@ public class SnakeUI extends JFrame {
             @Override
             public void keyReleased(KeyEvent e) {}
         };
-
+        mainPanel.setFocusable(true);
+        mainPanel.requestFocusInWindow();
         mainPanel.addKeyListener(keyListener);
         mainPanel.add(scorePanel, BorderLayout.NORTH);
         mainPanel.add(boardPanel);
@@ -403,13 +406,14 @@ public class SnakeUI extends JFrame {
             @Override
             public void keyReleased(KeyEvent e) {}
         };
-
+        pythonPanel.setFocusable(true);
+        pythonPanel.requestFocusInWindow();
         pythonPanel.addKeyListener(keyListener);
         scorePanel.add(livesPanel, BorderLayout.WEST);
         pythonPanel.add(scorePanel, BorderLayout.NORTH);
         pythonPanel.add(boardPanel);
         getContentPane().add(pythonPanel, "pythonPanel");
-        moveTimer = new Timer(270, e -> {
+        moveTimer = new Timer(350, e -> {
             if (pythonGame.getSnake().getDirection() != null) {
                 try {
                     pythonGame.performMove(pythonGame.getSnake().generateFromPositionAndDirection(pythonGame.getSnake().getDirection()));
@@ -425,7 +429,6 @@ public class SnakeUI extends JFrame {
         });
         moveTimer.start();
     }
-
 
     public static void main (String[] args) {
             try {
